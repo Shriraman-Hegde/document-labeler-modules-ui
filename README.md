@@ -2,6 +2,9 @@
 
 Lit.js modular UI for the [document-labeler](https://github.com/Shriraman-Hegde/document-labeler) HTTP API.
 
+**System prod docs (application, SDLC, reports):** [document-labeler/docs/prod](https://github.com/Shriraman-Hegde/document-labeler/tree/main/docs/prod)  
+**UI SDLC addendum:** [docs/SDLC.md](./docs/SDLC.md)
+
 ## Modules
 
 | Tag | Role |
