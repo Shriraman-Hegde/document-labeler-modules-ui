@@ -23,10 +23,10 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "build": "tsc -p tsconfig.build.json && rollup -c",
+    "build": "rm -rf .build dist && tsc -p tsconfig.build.json && rollup -c",
     "preview": "serve dist -l 4173",
-    "test": "playwright test",
-    "test:e2e": "playwright test"
+    "test": "npm run build && playwright test",
+    "test:e2e": "npm test"
   },
   "dependencies": {
     "lit": "^3.3.3"

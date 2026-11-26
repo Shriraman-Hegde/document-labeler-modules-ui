@@ -12,7 +12,8 @@ const pkg = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
 function writeProdHtml() {
   return {
     name: "write-prod-html",
-    writeBundle() {
+    // closeBundle runs once even with multiple outputs (avoids copy/unlink races on CI).
+    closeBundle() {
       const html = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -77,7 +78,8 @@ export default {
         { src: "src/styles/tokens.css", dest: "dist/styles" },
         { src: "public/favicon.svg", dest: "dist" },
       ],
-      hook: "writeBundle",
+      hook: "closeBundle",
+      copyOnce: true,
     }),
     writeProdHtml(),
   ],

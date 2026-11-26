@@ -11,7 +11,8 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "npm run build && npm run preview",
+    // `npm test` already builds once; only serve dist here (avoids double Rollup copy race on CI).
+    command: "npm run preview",
     url: "http://127.0.0.1:4173",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
