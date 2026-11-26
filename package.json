@@ -1,19 +1,31 @@
 {
   "name": "document-labeler-modules-ui",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "description": "Lit.js modules UI for document-labeler API",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "typescript": "~7.0.2",
-    "vite": "^8.3.6"
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json && rollup -c",
+    "preview": "serve dist -l 4173",
+    "test": "playwright test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "lit": "^3.3.3"
   },
-  "description": "Lit.js modules UI for document-labeler API"
+  "devDependencies": {
+    "@babel/core": "^7.29.13",
+    "@babel/preset-env": "^7.29.14",
+    "@playwright/test": "^1.65.1",
+    "@rollup/plugin-babel": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.68.8",
+    "rollup-plugin-copy": "^3.5.0",
+    "serve": "^14.2.8",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6"
+  }
 }

@@ -13,6 +13,10 @@ Lit.js modular UI for the [document-labeler](https://github.com/Shriraman-Hegde/
 
 Shared API helpers live in `src/lib/api.ts`.
 
+## State management
+
+**Zustand is not used.** UI state lives in Lit reactive `@state()` / `@property()` on `digitizer-app` and child modules. There is no cross-tree React-style store to justify Zustand; adding it would duplicate Lit’s own reactivity.
+
 ## Develop
 
 ```bash
@@ -28,9 +32,22 @@ npm run dev
 Open the Vite URL (default http://127.0.0.1:5173).  
 Set **API base** to `http://127.0.0.1:8091`, or use `?api=http://127.0.0.1:8091`.
 
-## Build
+## Production build (Rollup + Babel)
 
 ```bash
 npm run build
 npm run preview
 ```
+
+- `rollup.config.mjs` emits ES + IIFE bundles (`dist/digitizer-modules.js`, `dist/digitizer-modules.iife.js`)
+- TypeScript handles Lit `experimentalDecorators`; Babel (`babel.config.json`) only downlevels for browser targets
+- Static assets + `dist/index.html` are written alongside the bundles
+
+## Test (Playwright)
+
+```bash
+npx playwright install chromium   # once
+npm test
+```
+
+E2E specs in `e2e/` drive the production build with mocked `/v1/scan` and `/v1/relate`.
