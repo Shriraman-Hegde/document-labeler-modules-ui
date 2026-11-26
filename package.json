@@ -4,6 +4,22 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Lit.js modules UI for document-labeler API",
+  "main": "./dist/digitizer-modules.iife.js",
+  "module": "./dist/digitizer-modules.js",
+  "browser": "./dist/digitizer-modules.js",
+  "exports": {
+    ".": {
+      "import": "./dist/digitizer-modules.js",
+      "default": "./dist/digitizer-modules.iife.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",

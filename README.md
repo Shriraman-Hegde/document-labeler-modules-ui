@@ -51,3 +51,5 @@ npm test
 ```
 
 E2E specs in `e2e/` drive the production build with mocked `/v1/scan` and `/v1/relate`.
+
+CI runs `npm run build` + Playwright on every push/PR (`.github/workflows/ci.yml`).
