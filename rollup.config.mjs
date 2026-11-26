@@ -5,16 +5,25 @@ import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
 import copy from "rollup-plugin-copy";
+import { minify as minifyCss } from "csso";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
+
+function minifyHtml(html) {
+  return html
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\n\s*/g, "")
+    .replace(/>\s+</g, "><")
+    .trim();
+}
 
 function writeProdHtml() {
   return {
     name: "write-prod-html",
     // closeBundle runs once even with multiple outputs (avoids copy/unlink races on CI).
     closeBundle() {
-      const html = `<!DOCTYPE html>
+      const html = minifyHtml(`<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -31,12 +40,30 @@ function writeProdHtml() {
     <script type="module" src="./digitizer-modules.js"></script>
   </body>
 </html>
-`;
+`);
       mkdirSync(join(__dirname, "dist"), { recursive: true });
       writeFileSync(join(__dirname, "dist/index.html"), html);
     },
   };
 }
+
+const terserOptions = {
+  ecma: 2020,
+  module: true,
+  compress: {
+    passes: 2,
+    pure_getters: true,
+    unsafe_arrows: true,
+  },
+  mangle: {
+    // Keep Lit custom-element / reactive property names intact.
+    properties: false,
+  },
+  format: {
+    comments: /^!/,
+    ecma: 2020,
+  },
+};
 
 /** @type {import('rollup').RollupOptions} */
 export default {
@@ -50,6 +77,7 @@ export default {
       format: "es",
       sourcemap: true,
       banner: `/*! ${pkg.name}@${pkg.version} */`,
+      plugins: [terser(terserOptions)],
     },
     {
       file: "dist/digitizer-modules.iife.js",
@@ -57,6 +85,7 @@ export default {
       name: "DigitizerModules",
       sourcemap: true,
       banner: `/*! ${pkg.name}@${pkg.version} */`,
+      plugins: [terser({ ...terserOptions, module: false })],
     },
   ],
   plugins: [
@@ -70,12 +99,13 @@ export default {
       extensions: [".js"],
       exclude: "node_modules/**",
     }),
-    terser({
-      format: { comments: /^!/ },
-    }),
     copy({
       targets: [
-        { src: "src/styles/tokens.css", dest: "dist/styles" },
+        {
+          src: "src/styles/tokens.css",
+          dest: "dist/styles",
+          transform: (contents) => minifyCss(contents.toString()).css,
+        },
         { src: "public/favicon.svg", dest: "dist" },
       ],
       hook: "closeBundle",

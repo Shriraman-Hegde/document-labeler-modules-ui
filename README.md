@@ -42,9 +42,9 @@ npm run build
 npm run preview
 ```
 
-- `rollup.config.mjs` emits ES + IIFE bundles (`dist/digitizer-modules.js`, `dist/digitizer-modules.iife.js`)
+- `rollup.config.mjs` emits **minified** ES + IIFE bundles (`dist/digitizer-modules.js`, `dist/digitizer-modules.iife.js`) via Terser
+- CSS (`tokens.css`) minified with CSSO; `index.html` whitespace-minified
 - TypeScript handles Lit `experimentalDecorators`; Babel (`babel.config.json`) only downlevels for browser targets
-- Static assets + `dist/index.html` are written alongside the bundles
 
 ## Test (Playwright)
 
