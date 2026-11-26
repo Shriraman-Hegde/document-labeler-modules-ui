@@ -9,7 +9,7 @@ Lit.js modular UI for the [document-labeler](https://github.com/Shriraman-Hegde/
 | `digitizer-app` | Shell / orchestration |
 | `capture-stage` | Camera viewport + still/PDF preview |
 | `scan-form` | API base, department, mode, actions |
-| `result-panel` | Scan JSON output |
+| `result-panel` | Scan / relate JSON output |
 
 Shared API helpers live in `src/lib/api.ts`.
 

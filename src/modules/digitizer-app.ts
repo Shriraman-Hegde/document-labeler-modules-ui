@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { persistApiBase, postScan, resolveApiBase } from "../lib/api";
+import { getRelate, persistApiBase, postScan, resolveApiBase } from "../lib/api";
 import "./capture-stage";
 import "./scan-form";
 import "./result-panel";
@@ -15,6 +15,7 @@ export class DigitizerApp extends LitElement {
   @state() private canCapture = false;
   @state() private canScan = false;
   @state() private scanning = false;
+  @state() private relating = false;
   @state() private resultJson = "";
   @state() private showResults = false;
 
@@ -109,21 +110,27 @@ export class DigitizerApp extends LitElement {
     this.status = "File selected — press Scan.";
   }
 
+  private requireBase(): string | null {
+    if (!this.dept.trim()) {
+      this.status = "Department is required.";
+      return null;
+    }
+    const base = this.apiBase.trim().replace(/\/$/, "");
+    if (!base) {
+      this.status = "API base URL is required.";
+      return null;
+    }
+    persistApiBase(base);
+    return base;
+  }
+
   private async onScan() {
     if (!this.pending) {
       this.status = "Capture or upload a document first.";
       return;
     }
-    if (!this.dept.trim()) {
-      this.status = "Department is required.";
-      return;
-    }
-    const base = this.apiBase.trim().replace(/\/$/, "");
-    if (!base) {
-      this.status = "API base URL is required.";
-      return;
-    }
-    persistApiBase(base);
+    const base = this.requireBase();
+    if (!base) return;
     this.scanning = true;
     this.status = "Scanning…";
     try {
@@ -141,6 +148,23 @@ export class DigitizerApp extends LitElement {
       this.status = "Scan failed: " + (err instanceof Error ? err.message : String(err));
     } finally {
       this.scanning = false;
+    }
+  }
+
+  private async onRelate() {
+    const base = this.requireBase();
+    if (!base) return;
+    this.relating = true;
+    this.status = "Loading relations…";
+    try {
+      const data = await getRelate(base, this.dept.trim());
+      this.showResults = true;
+      this.resultJson = JSON.stringify(data, null, 2);
+      this.status = "Relations loaded.";
+    } catch (err) {
+      this.status = "Relate failed: " + (err instanceof Error ? err.message : String(err));
+    } finally {
+      this.relating = false;
     }
   }
 
@@ -164,6 +188,7 @@ export class DigitizerApp extends LitElement {
           .canCapture=${this.canCapture}
           .canScan=${this.canScan}
           .scanning=${this.scanning}
+          .relating=${this.relating}
           @api-change=${(e: CustomEvent<string>) => (this.apiBase = e.detail)}
           @dept-change=${(e: CustomEvent<string>) => (this.dept = e.detail)}
           @mode-change=${(e: CustomEvent<string>) => (this.mode = e.detail)}
@@ -171,6 +196,7 @@ export class DigitizerApp extends LitElement {
           @capture=${() => this.onCapture()}
           @file-chosen=${(e: CustomEvent<File>) => this.onFileChosen(e.detail)}
           @scan=${() => this.onScan()}
+          @relate=${() => this.onRelate()}
         ></scan-form>
       </section>
 

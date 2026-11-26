@@ -26,6 +26,20 @@ export function persistApiBase(base: string): void {
   localStorage.setItem(STORAGE_KEY, base.replace(/\/$/, ""));
 }
 
+async function readJSON<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  let data: T & { error?: string };
+  try {
+    data = JSON.parse(text) as T & { error?: string };
+  } catch {
+    throw new Error(text || res.statusText);
+  }
+  if (!res.ok) {
+    throw new Error(data.error || text || res.statusText);
+  }
+  return data;
+}
+
 export async function postScan(
   apiBase: string,
   opts: { dept: string; mode?: string; file: Blob; filename: string },
@@ -36,15 +50,11 @@ export async function postScan(
   body.append("file", opts.file, opts.filename);
 
   const res = await fetch(`${apiBase}/v1/scan`, { method: "POST", body });
-  const text = await res.text();
-  let data: ScanResponse & { error?: string };
-  try {
-    data = JSON.parse(text) as ScanResponse & { error?: string };
-  } catch {
-    throw new Error(text || res.statusText);
-  }
-  if (!res.ok) {
-    throw new Error(data.error || text || res.statusText);
-  }
-  return data;
+  return readJSON<ScanResponse>(res);
+}
+
+export async function getRelate(apiBase: string, dept: string): Promise<unknown> {
+  const q = new URLSearchParams({ dept });
+  const res = await fetch(`${apiBase}/v1/relate?${q}`);
+  return readJSON<unknown>(res);
 }

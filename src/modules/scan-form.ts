@@ -10,6 +10,7 @@ export class ScanForm extends LitElement {
   @property({ type: Boolean }) canCapture = false;
   @property({ type: Boolean }) canScan = false;
   @property({ type: Boolean }) scanning = false;
+  @property({ type: Boolean }) relating = false;
 
   static styles = css`
     :host {
@@ -160,6 +161,14 @@ export class ScanForm extends LitElement {
           @click=${() => this.emit("scan")}
         >
           ${this.scanning ? "Scanning…" : "Scan"}
+        </button>
+        <button
+          type="button"
+          class="ghost"
+          ?disabled=${this.relating || this.scanning}
+          @click=${() => this.emit("relate")}
+        >
+          ${this.relating ? "Relating…" : "Relate"}
         </button>
       </div>
       <p class="status" role="status">${this.status}</p>
