@@ -1,0 +1,35 @@
+:root {
+  --ink: #1a1714;
+  --paper: #f3ece2;
+  --mist: #d9cfc0;
+  --steel: #3d4f5f;
+  --copper: #b65c2c;
+  --copper-deep: #8a3f18;
+  --line: rgba(26, 23, 20, 0.14);
+  --shadow: rgba(26, 23, 20, 0.28);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Source Sans 3", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 700px at 10% -10%, rgba(182, 92, 44, 0.18), transparent 55%),
+    radial-gradient(900px 600px at 100% 0%, rgba(61, 79, 95, 0.16), transparent 50%),
+    linear-gradient(165deg, #efe6da 0%, #e4d7c6 45%, #d7c8b4 100%);
+}
